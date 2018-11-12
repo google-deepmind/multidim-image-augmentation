@@ -1,0 +1,3 @@
+# Support bazelrc through migration of location.
+# See https://github.com/bazelbuild/bazel/issues/6319
+import %workspace%/tools/bazel.rc
