@@ -22,7 +22,7 @@ deformed versions of another instance.
 ## Spatial Transformations
 
 ![Elastic
-Deformation](elastic_deformation_figure.png)
+Deformation](figs/elastic_deformation_figure.png) [^footnote]
 
 The key features of this implementation of spatial transformations are:
 
@@ -50,10 +50,12 @@ For maximal flexibility the implementation consists of three main steps:
     weight map using appropriate interpolation and extrapolation strategies
     (output image in the Figure)
 
+For more details, see the [Elastic Image Deformation
+Docs](elastic_deformation_colab.md)
 
 ## Intensity Transformations
 
-![Intensity Transformations](intensity_transformations_figure.png)
+![Intensity Transformations](figs/intensity_transformations_figure.png)
 
 Intensity or color augmentation helps to teach the network desired robustness
 and helps to reduce overfitting. Standard color augmentations (contrast,
@@ -83,3 +85,10 @@ function via cubic bspline interpolation
     value such that the slope constraints to both neighbours are fulfilled
 1.  compute the smooth mapping function via cubic bspline interpolation
 
+For more details, see the [Color Augmentation Docs](color_augmentation_colab.md)
+
+[^footnote]: All images are derived from
+    [Wikimedia](https://commons.wikimedia.org/wiki/File:Freiburg_Martinstor.jpg)
+    author [Luidger](https://commons.wikimedia.org/wiki/User:Luidger), and are
+    licensed under the under the [Creative Commons Attribution-Share Alike 3.0
+    Unported license](https://creativecommons.org/licenses/by-sa/3.0/deed.en)
