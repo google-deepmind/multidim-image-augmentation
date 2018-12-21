@@ -107,7 +107,7 @@ Add random offsets to the control points to apply a random deformation
 deformations_magnitudes_um = 15
 
 # for this tutorial we want always the same "random" deformation
-
+np.random.seed(123)
 random_offsets = tf.constant(
     np.random.normal(0, deformations_magnitudes_um,
                      control_grid.get_shape().as_list()),dtype=np.float32)
