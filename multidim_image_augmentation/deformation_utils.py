@@ -57,7 +57,7 @@ def create_centered_identity_transformation_field(shape, spacings):
     3D case: 4-D Tensor (x0, x1, x2, comp)  describing a 3D vector field
   """
   coords = []
-  for i in xrange(len(shape)):
+  for i in range(len(shape)):
     size = shape[i]
     spacing = spacings[i]
     coords.append(tf.linspace(
