@@ -19,7 +19,6 @@ The transformation describes a mapping from the target image space to the source
 
 These steps are shown below in detail
 
-
 ## Imports
 
 ```python

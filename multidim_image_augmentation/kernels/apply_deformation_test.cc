@@ -24,10 +24,12 @@
 
 namespace deepmind {
 namespace multidim_image_augmentation {
+
 namespace {
 
 using ::testing::Eq;
 using ::testing::FloatEq;
+using ::testing::FloatNear;
 using ::testing::Pointwise;
 
 template <typename T, int N>
@@ -470,6 +472,38 @@ TEST(Deform2DTest, IdentityTransform) {
               Pointwise(FloatEq(), EigenTensorToStdVector(in)));
 }
 
+TEST(Deform2DTest, IdentityTransformOneChannel) {
+  Eigen::Tensor<float, 3, Eigen::RowMajor> in(1, 8, 1);   // e.g. RGB image
+  Eigen::Tensor<float, 3, Eigen::RowMajor> out(1, 8, 1);  // e.g. RGB image
+  Eigen::Tensor<float, 3, Eigen::RowMajor> deform(1, 8, 2);
+
+  in.setRandom();
+  out.setZero();
+  SetEigenTensor2DToIdentity(&deform);
+
+  ApplyDeformation<kNearest, kZeroPadding, kNoConversion>::Deform2D(in, deform,
+                                                                    &out);
+
+  EXPECT_THAT(EigenTensorToStdVector(out),
+              Pointwise(FloatEq(), EigenTensorToStdVector(in)));
+}
+
+TEST(Deform2DTest, IdentityTransformOneChannelLinear) {
+  Eigen::Tensor<float, 3, Eigen::RowMajor> in(1, 8, 1);   // e.g. RGB image
+  Eigen::Tensor<float, 3, Eigen::RowMajor> out(1, 8, 1);  // e.g. RGB image
+  Eigen::Tensor<float, 3, Eigen::RowMajor> deform(1, 8, 2);
+
+  in.setRandom();
+  out.setZero();
+  SetEigenTensor2DToIdentity(&deform);
+
+  ApplyDeformation<kNearest, kZeroPadding, kNoConversion>::Deform2D(in, deform,
+                                                                    &out);
+
+  EXPECT_THAT(EigenTensorToStdVector(out),
+              Pointwise(FloatEq(), EigenTensorToStdVector(in)));
+}
+
 TEST(Deform2DTest, Uint8ToFloat) {
   Eigen::Tensor<uint8, 3, Eigen::RowMajor> in(4, 7, 3);   // e.g. RGB image
   Eigen::Tensor<float, 3, Eigen::RowMajor> out(4, 7, 3);  // e.g. RGB image
@@ -571,8 +605,8 @@ TEST(Deform2DTest, LinearInterpolation) {
   in.setValues({{{0}, {1}},
                 {{2}, {3}}});
   deform.setValues(
-      {{{0,   0.5}, {1, 1.25}},
-       {{0.5, 0.5}, {1, 0.25}}});
+      {{{0,   0.5}, {1, 1.25} },
+       {{0.5, 0.5}, {1, 0.25} }});
   // clang-format on
 
   Eigen::Tensor<float, 3, Eigen::RowMajor> out(2, 2, 1);
@@ -638,6 +672,120 @@ TEST(Deform2DTest, NearestInterpolation) {
 
   EXPECT_THAT(EigenTensorToStdVector(out),
               Pointwise(FloatEq(), {1., 0., 3., 2.}));
+}
+
+//
+// Tests for AVX2 implementations of ApplyDeformation::Deform2D
+//
+
+TEST(Deform2DTest, LinearInterpolation_AVX2) {
+  Eigen::Tensor<float, 3, Eigen::RowMajor> in(2, 9, 1);
+  Eigen::Tensor<float, 3, Eigen::RowMajor> deform(1, 8, 2);
+  // clang-format off
+  in.setValues({{{0}, {1}, {4}, {5}, {8},  {9},  {12}, {13}, {14}},
+                {{2}, {3}, {6}, {7}, {10}, {11}, {14}, {15}, {16}}});
+  deform.setValues(
+      {{{1, 0}, {0, 1}, {0.3, 1.2}, {0.25, 2.1}, {0.5, 0.5}, {0.8, 4.6},
+           {0.5, 5.6}, {0.25, 5.7} }});
+  // clang-format on
+
+  Eigen::Tensor<float, 3, Eigen::RowMajor> out(1, 8, 1);
+
+  // Run without AVX.
+  ApplyDeformation<kLinear, kZeroPadding, kNoConversion,
+                   /*use_avx_optimizations=*/false>::Deform2D(in, deform, &out);
+
+  EXPECT_THAT(
+      EigenTensorToStdVector(out),
+      Pointwise(FloatEq(), {2.0, 1.0, 2.2, 4.6, 1.5, 10.2, 11.8, 11.6}));
+
+  ApplyDeformation<kLinear, kZeroPadding, kNoConversion>::Deform2D(in, deform,
+                                                                   &out);
+
+  EXPECT_THAT(
+      EigenTensorToStdVector(out),
+      Pointwise(FloatEq(), {2.0, 1.0, 2.2, 4.6, 1.5, 10.2, 11.8, 11.6}));
+}
+
+TEST(Deform2DTest, NearestInterpolation_AVX2) {
+  Eigen::Tensor<float, 3, Eigen::RowMajor> in(2, 9, 1);
+  Eigen::Tensor<float, 3, Eigen::RowMajor> deform(1, 8, 2);
+  // clang-format off
+  in.setValues({{{0}, {1}, {4}, {5}, {8},  {9},  {12}, {13}, {14}},
+                {{2}, {3}, {6}, {7}, {10}, {11}, {14}, {15}, {16}}});
+  deform.setValues(
+      {{{1, 0}, {0, 1}, {0.3, 1.2}, {0.25, 2.1}, {0.5, 0.5}, {0.8, 4.6},
+            {0.5, 5.6}, {0.25, 5.7} }});
+  // clang-format on
+
+  Eigen::Tensor<float, 3, Eigen::RowMajor> out(1, 8, 1);
+
+  // Run without AVX.
+  ApplyDeformation<kNearest, kZeroPadding, kNoConversion,
+                   /*use_avx_optimizations=*/false>::Deform2D(in, deform, &out);
+
+  EXPECT_THAT(
+      EigenTensorToStdVector(out),
+      Pointwise(FloatEq(), {2.0, 1.0, 1.0, 4.0, 3.0, 11.0, 14.0, 12.0}));
+
+  ApplyDeformation<kNearest, kZeroPadding, kNoConversion>::Deform2D(in, deform,
+                                                                    &out);
+
+  EXPECT_THAT(
+      EigenTensorToStdVector(out),
+      Pointwise(FloatEq(), {2.0, 1.0, 1.0, 4.0, 3.0, 11.0, 14.0, 12.0}));
+}
+
+TEST(Deform2DTest, NearestInterpolation_AVX2_Random) {
+  const int64 kNumTests = 1000;
+  for (int i = 0; i < kNumTests; ++i) {
+    Eigen::Tensor<float, 3, Eigen::RowMajor> in(2, 9, 1);
+    Eigen::Tensor<float, 3, Eigen::RowMajor> deform(1, 8, 2);
+    // clang-format off
+    in.setValues({{{0}, {1}, {4}, {5}, {8},  {9},  {12}, {13}, {14}},
+                  {{2}, {3}, {6}, {7}, {10}, {11}, {14}, {15}, {16}}});
+    // clang-format on
+    deform.setRandom();
+    deform = deform * 5.0f;
+
+    Eigen::Tensor<float, 3, Eigen::RowMajor> out(1, 8, 1);
+    Eigen::Tensor<float, 3, Eigen::RowMajor> out_opt(1, 8, 1);
+
+    ApplyDeformation<kNearest, kZeroPadding, kNoConversion, false>::Deform2D(
+        in, deform, &out);
+
+    ApplyDeformation<kNearest, kZeroPadding, kNoConversion, true>::Deform2D(
+        in, deform, &out_opt);
+
+    EXPECT_THAT(EigenTensorToStdVector(out),
+                Pointwise(FloatEq(), EigenTensorToStdVector(out_opt)));
+  }
+}
+
+TEST(Deform2DTest, LinearInterpolation_AVX2_Random) {
+  const int64 kNumTests = 1000;
+  for (int i = 0; i < kNumTests; ++i) {
+    Eigen::Tensor<float, 3, Eigen::RowMajor> in(2, 9, 1);
+    Eigen::Tensor<float, 3, Eigen::RowMajor> deform(1, 8, 2);
+    // clang-format off
+    in.setValues({{{0}, {1}, {4}, {5}, {8},  {9},  {12}, {13}, {14}},
+                  {{2}, {3}, {6}, {7}, {10}, {11}, {14}, {15}, {16}}});
+    // clang-format on
+    deform.setRandom();
+    deform = deform * 5.0f;
+
+    Eigen::Tensor<float, 3, Eigen::RowMajor> out(1, 8, 1);
+    Eigen::Tensor<float, 3, Eigen::RowMajor> out_opt(1, 8, 1);
+
+    ApplyDeformation<kLinear, kZeroPadding, kNoConversion, false>::Deform2D(
+        in, deform, &out);
+
+    ApplyDeformation<kLinear, kZeroPadding, kNoConversion, true>::Deform2D(
+        in, deform, &out_opt);
+
+    ASSERT_THAT(EigenTensorToStdVector(out_opt),
+                Pointwise(FloatNear(1e-5), EigenTensorToStdVector(out)));
+  }
 }
 
 //
@@ -897,6 +1045,76 @@ TEST(Deform3DTest, MixedNearestLinearInterpolation) {
 // TODO: Get these working in OSS build.
 #if defined(PLATFORM_GOOGLE)
 
+// Hits the AVX2 optimized fast-path for 1-channel nearest-neighbor, but
+// disables the fast-path.
+static void BM_Deform2D3968To3072_NoAvx(benchmark::State& state) {
+  Eigen::Tensor<float, 3, Eigen::RowMajor> in(3968, 3072, 1);
+  Eigen::Tensor<float, 3, Eigen::RowMajor> deform(3072, 2304, 2);
+  Eigen::Tensor<float, 3, Eigen::RowMajor> out(3072, 2304, 1);
+
+  in.setRandom();
+  SetEigenTensor2DToIdentity(&deform);
+
+  for (auto _ : state) {
+    ApplyDeformation<kNearest, kZeroPadding, kNoConversion,
+                     /*use_avx_optimizations=*/false>::Deform2D(in, deform,
+                                                                &out);
+  }
+}
+
+BENCHMARK(BM_Deform2D3968To3072_NoAvx);
+
+// Hits the AVX2 optimized fast-path for 1-channel nearest-neighbor.
+static void BM_Deform2D3968To3072_Avx(benchmark::State& state) {
+  Eigen::Tensor<float, 3, Eigen::RowMajor> in(3968, 3072, 1);
+  Eigen::Tensor<float, 3, Eigen::RowMajor> deform(3072, 2304, 2);
+  Eigen::Tensor<float, 3, Eigen::RowMajor> out(3072, 2304, 1);
+
+  in.setRandom();
+  SetEigenTensor2DToIdentity(&deform);
+
+  for (auto _ : state) {
+    ApplyDeformation<kNearest, kZeroPadding, kNoConversion>::Deform2D(
+        in, deform, &out);
+  }
+}
+
+BENCHMARK(BM_Deform2D3968To3072_Avx);
+
+static void BM_Deform2D3968To3072_Linear_NoAvx(benchmark::State& state) {
+  Eigen::Tensor<float, 3, Eigen::RowMajor> in(3968, 3072, 1);
+  Eigen::Tensor<float, 3, Eigen::RowMajor> deform(3072, 2304, 2);
+  Eigen::Tensor<float, 3, Eigen::RowMajor> out(3072, 2304, 1);
+
+  in.setRandom();
+  SetEigenTensor2DToIdentity(&deform);
+
+  for (auto _ : state) {
+    ApplyDeformation<kLinear, kZeroPadding, kNoConversion,
+                     /*use_avx_optimizations=*/false>::Deform2D(in, deform,
+                                                                &out);
+  }
+}
+
+BENCHMARK(BM_Deform2D3968To3072_Linear_NoAvx);
+
+// Hits the AVX2 optimized fast-path for 1-channel nearest-neighbor.
+static void BM_Deform2D3968To3072_Linear_Avx(benchmark::State& state) {
+  Eigen::Tensor<float, 3, Eigen::RowMajor> in(3968, 3072, 1);
+  Eigen::Tensor<float, 3, Eigen::RowMajor> deform(3072, 2304, 2);
+  Eigen::Tensor<float, 3, Eigen::RowMajor> out(3072, 2304, 1);
+
+  in.setRandom();
+  SetEigenTensor2DToIdentity(&deform);
+
+  for (auto _ : state) {
+    ApplyDeformation<kLinear, kZeroPadding, kNoConversion>::Deform2D(in, deform,
+                                                                     &out);
+  }
+}
+
+BENCHMARK(BM_Deform2D3968To3072_Linear_Avx);
+
 static void BM_Deform2D512To400(benchmark::State& state) {
   Eigen::Tensor<float, 3, Eigen::RowMajor> in(512, 512, 3);
   Eigen::Tensor<float, 3, Eigen::RowMajor> deform(400, 400, 2);
@@ -906,8 +1124,8 @@ static void BM_Deform2D512To400(benchmark::State& state) {
   SetEigenTensor2DToIdentity(&deform);
 
   for (auto _ : state) {
-    ApplyDeformation<kLinear, kZeroPadding, kNoConversion>::Deform2D(
-        in, deform, &out);
+    ApplyDeformation<kLinear, kZeroPadding, kNoConversion>::Deform2D(in, deform,
+                                                                     &out);
   }
 }
 
@@ -938,8 +1156,8 @@ static void BM_Deform3D256To128(benchmark::State& state) {
   SetEigenTensor3DToIdentity(&deform);
 
   for (auto _ : state) {
-    ApplyDeformation<kLinear, kMirror, kNoConversion>::Deform3D(
-        in, deform, &out);
+    ApplyDeformation<kLinear, kMirror, kNoConversion>::Deform3D(in, deform,
+                                                                &out);
   }
 }
 
@@ -954,8 +1172,8 @@ static void BM_Deform3D256To128Nearest(benchmark::State& state) {
   SetEigenTensor3DToIdentity(&deform);
 
   for (auto _ : state) {
-    ApplyDeformation<kNearest, kMirror, kNoConversion>::Deform3D(
-        in, deform, &out);
+    ApplyDeformation<kNearest, kMirror, kNoConversion>::Deform3D(in, deform,
+                                                                 &out);
   }
 }
 
@@ -978,7 +1196,6 @@ static void BM_Deform3D256To128Mixed(benchmark::State& state) {
 BENCHMARK(BM_Deform3D256To128Mixed);
 
 #endif  // #if defined(PLATFORM_GOOGLE)
-
 
 }  // namespace
 }  // namespace multidim_image_augmentation

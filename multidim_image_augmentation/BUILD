@@ -7,6 +7,7 @@ exports_files(["LICENSE"])
 
 load(
     "@org_tensorflow//tensorflow:tensorflow.bzl",
+    "tf_cc_test",
     "tf_custom_op_library",
     "tf_gen_op_wrapper_py",
     "tf_kernel_library",
@@ -61,7 +62,9 @@ cc_test(
 
 cc_library(
     name = "apply_deformation",
-    hdrs = ["kernels/apply_deformation.h"],
+    hdrs = select({
+        "//conditions:default": [],
+    }) + ["kernels/apply_deformation.h"],
     deps = [
         ":types",
         "@org_tensorflow//tensorflow/core:framework_headers_lib",
@@ -106,6 +109,22 @@ cc_library(
         "@protobuf_archive//:protobuf",
     ],
     alwayslink = 1,
+)
+
+tf_cc_test(
+    name = "apply_tabulated_functions_op_test",
+    size = "small",
+    srcs = ["kernels/apply_tabulated_functions_op_test.cc"],
+    deps = [
+        ":augmentation_ops_interfaces_and_kernels",
+        "@org_tensorflow//tensorflow/cc:const_op",
+        "@org_tensorflow//tensorflow/core:framework",
+        "@org_tensorflow//tensorflow/core:test",
+        "@org_tensorflow//tensorflow/core:testlib",
+        "@org_tensorflow//tensorflow/core/kernels:ops_testutil",
+        "@org_tensorflow//tensorflow/core/kernels:ops_util",
+        "@com_google_googletest//:gtest_main",
+    ],
 )
 
 tf_kernel_library(

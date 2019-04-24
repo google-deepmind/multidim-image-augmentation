@@ -15,16 +15,16 @@ http_archive(
 # Tensorflow. If your project already builds Tensorflow source you should
 # replace this with an appropriate local_archice() call.
 # To update this to a newer TF version:
-# 1/ curl -L https://github.com/tensorflow/tensorflow/archive/vX.Y.Z.tar | sha256sum
+# 1/ curl -L https://github.com/tensorflow/tensorflow/archive/vX.Y.Z.tar.gz | sha256sum
 # 2/ Update `sha256`, `strip_prefix` and `urls` attributes appropriately.
 # 3/ Update io_bazel_rules_closure above to match the version used by TF.
 http_archive(
     name = "org_tensorflow",
-    sha256 = "f49ce3f1d04cee854bc9f74fa9696991140b34a2e2447f35f01391b72c8bfa9f",
-    strip_prefix = "tensorflow-1.11.0",
+    sha256 = "7cd19978e6bc7edc2c847bce19f95515a742b34ea5e28e4389dade35348f58ed",
+    strip_prefix = "tensorflow-1.13.1",
     urls = [
-        "https://mirror.bazel.build/github.com/tensorflow/tensorflow/archive/v1.11.0.tar.gz",
-        "https://github.com/tensorflow/tensorflow/archive/v1.11.0.tar.gz",
+        "https://mirror.bazel.build/github.com/tensorflow/tensorflow/archive/v1.13.1.tar.gz",
+        "https://github.com/tensorflow/tensorflow/archive/v1.13.1.tar.gz",
     ],
 )
 

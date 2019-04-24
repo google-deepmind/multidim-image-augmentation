@@ -19,7 +19,6 @@ The algorithm first samples control points (here 5) and then computes the smooth
 3. recursively insert a new control point between the existing ones. Sample its value such that the slope contraints to both neightbours are fulfilled
 
 
-
 ## Imports
 
 ```python

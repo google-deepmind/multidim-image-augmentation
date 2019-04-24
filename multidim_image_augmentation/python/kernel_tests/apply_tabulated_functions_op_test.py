@@ -33,13 +33,15 @@ class ApplyTabulatedFunctionTest(tf.test.TestCase):
 
   def testBasicUsage(self):
     with self.session():
-      image = np.array([[[5], [2], [4], [0], [3]]]).astype(np.float32)
+      image = np.array([[[5], [2], [4], [0], [3], [5], [2], [4], [0],
+                         [3]]]).astype(np.float32)
       tabulated_functions = np.array([[10, 11, 12, 13, 14, 15, 16,
                                        17]]).astype(np.float32)
       out_image = augmentation_ops.apply_tabulated_functions(
           image, tabulated_functions)
       self.assertAllEqual(
-          np.array([[[15], [12], [14], [10], [13]]]), out_image.eval())
+          np.array([[[15], [12], [14], [10], [13], [15], [12], [14], [10],
+                     [13]]]), out_image.eval())
 
   def testInterpolationExtrapolation(self):
     with self.session():

@@ -250,7 +250,7 @@ extrapolation: The extrapolation style determines how the output is filled where
   with zeros, or `const_padding` to pad with a constant value: see the
   `padding_constant` attribute.
 conversion: On-the-fly conversation. `no_conversion` provides passes
-  input to output channels (e.g. 5 channel input yeilds a 5 channel output).
+  input to output channels (e.g. 5 channel input yields a 5 channel output).
   `indexed_to_one_hot` converts the indexed input segmentation map (1 channel
   with values like 3 for class 3) to a one-hot-encoded output segmentation map
   (e.g. 8 channels with values like (0, 0, 0, 1, 0, 0, 0, 0) for class 3). The
@@ -278,13 +278,11 @@ Status ApplyDeformationShapeFunction(InferenceContext* context) {
   // One additional dimension for the channels.
   static const int kTensorRank = spatial_dims + 1;
 
-  ShapeHandle input_shape, deform_shape, padding_shape;
+  ShapeHandle input_shape, deform_shape;
   TF_RETURN_IF_ERROR(context->WithRank(context->input(kInputIndex), kTensorRank,
                                        &input_shape));
   TF_RETURN_IF_ERROR(context->WithRank(context->input(kDeformIndex),
                                        kTensorRank, &deform_shape));
-  TF_RETURN_IF_ERROR(
-      context->WithRank(context->input(kPaddingConstIndex), 1, &padding_shape));
 
   ShapeHandle output_shape(deform_shape);
 
@@ -300,14 +298,15 @@ Status ApplyDeformationShapeFunction(InferenceContext* context) {
       (attrs.output_num_channels >= 0)
           ? context->MakeDim(attrs.output_num_channels)
           : context->Dim(input_shape, spatial_dims);
-  DimensionHandle padding_size = context->Dim(padding_shape, 0);
   // Assert that `padding_size` matches the number of channels if const padding
-  // is being used, of else it must be 0.
+  // is being used.
   if (attrs.extrapolation_style == "const_padding") {
+    ShapeHandle padding_shape;
+    TF_RETURN_IF_ERROR(context->WithRank(context->input(kPaddingConstIndex), 1,
+                                         &padding_shape));
+    DimensionHandle padding_size = context->Dim(padding_shape, 0);
     TF_RETURN_IF_ERROR(
         context->Merge(padding_size, num_channels, &num_channels));
-  } else {
-    TF_RETURN_IF_ERROR(context->WithValue(padding_size, 0, &padding_size));
   }
   TF_RETURN_IF_ERROR(context->ReplaceDim(output_shape, spatial_dims,
                                          num_channels, &output_shape));

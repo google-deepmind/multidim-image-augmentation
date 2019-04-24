@@ -44,6 +44,24 @@ class CubicInterpolationTest(tf.test.TestCase):
       self.assertAlmostEqual(grid[2, 2, 1], dense[10, 10, 1], precision)
       self.assertAlmostEqual(grid[3, 3, 1], dense[20, 20, 1], precision)
 
+  def testFactorAttrLengthErrors(self):
+    with self.session():
+      with self.assertRaisesWithPredicateMatch(ValueError,
+                                               "factors must be rank 2, got 3"):
+        augmentation_ops.cubic_interpolation2d(
+            np.ndarray([1, 1, 1]),
+            factors=[3, 4, 5],
+            output_spatial_shape=[8, 9]).eval()
+
+  def testOutputSpatialLengthAttrLengthErrors(self):
+    with self.session():
+      with self.assertRaisesWithPredicateMatch(
+          ValueError, "output_spatial_shape must be rank 2, got 3"):
+        augmentation_ops.cubic_interpolation2d(
+            np.ndarray([1, 1, 1]),
+            factors=[3, 4],
+            output_spatial_shape=[7, 8, 9]).eval()
+
 
 if __name__ == "__main__":
   tf.test.main()

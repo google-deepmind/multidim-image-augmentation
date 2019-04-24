@@ -36,8 +36,8 @@ def vectorized_random_uniform(minvals, maxvals, name=None):
 
   with tf.variable_scope(name, "vectorized_random_uniform", [minvals, maxvals]):
     ranges = tf.subtract(maxvals, minvals, name="ranges")
-    samples = tf.random_uniform(
-        ranges.shape_as_list(), dtype=ranges.dtype, name="samples")
+    samples = tf.random.uniform(
+        ranges.shape, dtype=ranges.dtype, name="samples")
     samples_scaled = tf.multiply(ranges, samples, name="samples_scaled")
     samples_scaled_offset = tf.add(samples_scaled,
                                    minvals,
@@ -141,6 +141,91 @@ def create_2x2_shearing_matrix(shearing_coefs):
   shearing = [[1, shearing_coefs[0]], [shearing_coefs[1], 1]]
   shearing = tf.convert_to_tensor(shearing, name="shearing_matrix")
   return shearing
+
+
+def create_2d_deformation_field(
+    raw_image_center_pos_pix, raw_image_element_size_um,
+    net_input_spatial_shape, net_input_element_size_um,
+    control_grid_spacings_pix, deformations_magnitudes_um, rotation_angle,
+    scale_factors, mirror_factors, shearing_coefs, cropping_offset_pix):
+  """Creates a 2D deformation field.
+
+  Creates a dense 2D deformation field for affine and elastic deformations. The
+  created 2D vector field (represented as a 3-D Tensor with (x0, x1, comp))
+  has the same spatial shape as the output (net_input) image and contains the
+  absolute positions of the corresponding pixels in the input (raw) image. The
+  process of creating the deformation field has four steps:
+    1. Setup a grid of control points.
+    2. Add a random offset to each control point drawn from a normal
+       distribution to model the random elastic deformation.
+    3. Apply the affine transformation to the control points.
+    4. Compute a dense transformation field using cubic bspline interpolation.
+  A more detailed description of the process can be found in the doc directory.
+
+  Args:
+    raw_image_center_pos_pix: 1-D Tensor with 2 elements of type tf.float32. The
+      position of the center of the raw image in pixels from the upper, left
+      corner.
+    raw_image_element_size_um: 1-D Tensor with 2 elements of type tf.float32.
+      The pixel spacing (in micrometers) of the raw image.
+    net_input_spatial_shape: List with 2 elements. The shape of the image that
+      will be fed into the network (excluding channel dimension).
+    net_input_element_size_um: Tensor with 2 elements. The pixel spacing (in
+      micrometers) of the image that will be fed into the network.
+    control_grid_spacings_pix: List with 2 elements. The control grid spacing in
+      pixels.
+    deformations_magnitudes_um: 1-D Tensor with 2 elements. The magnitudes for
+      the random deformations. Will set the standard deviation (in micrometers)
+      of a random normal distribution from which deformations will be generated.
+    rotation_angle: Rotation angle in radians as a float (or single element
+      Tensor of floating point type). In the absence of mirroring, a positive
+      angle produces a counter-clockwise rotation of image contents.
+    scale_factors: 1-D Tensor with 2 elements of type tf.float32. Scale factors
+      in x0, x1 directions.
+    mirror_factors: 1-D Tensor with 2 elements. Mirror factors in x0, x1
+      directions. Each factor should be 1 or -1.
+    shearing_coefs: 1-D Tensor with 2 elements of type tf.float32. The shearing
+      coefficients (s01, s10) to create the shearing matrix:
+      [[ 1 , s01], [s10,  1]].
+    cropping_offset_pix: 1-D Tensor with 2 elements of type tf.float32. Cropping
+      position (center of the cropped patch in the raw image) in pixels relative
+      to the image origin (the origin is specified above as
+      raw_image_center_pos_pix).
+
+  Returns:
+    3-D Tensor (x0, x1, comp) containing a 2D vector field.
+  """
+  # Set up the centered control grid for identity transform in real world
+  # coordinates.
+  control_grid = create_control_grid_for_cubic_interp(
+      transformed_image_shape=net_input_spatial_shape,
+      transformed_image_spacings_um=net_input_element_size_um,
+      control_grid_spacings_pix=control_grid_spacings_pix)
+
+  # Add random deformation.
+  control_grid += deformations_magnitudes_um * tf.random.normal(
+      shape=control_grid.shape)
+
+  # Apply affine transformation and transform units to raw image pixels.
+  scale_to_pix = 1. / raw_image_element_size_um
+  affine = tf.matmul(
+      create_2x2_rotation_matrix(rotation_angle),
+      tf.diag(scale_factors * tf.to_float(mirror_factors) * scale_to_pix))
+  affine_shearing = tf.matmul(affine,
+                              create_2x2_shearing_matrix(shearing_coefs))
+
+  control_grid = tf.reshape(
+      tf.matmul(tf.reshape(control_grid, [-1, 2]), affine_shearing),
+      control_grid.get_shape().as_list())
+
+  # Translate to cropping position.
+  control_grid += raw_image_center_pos_pix + cropping_offset_pix
+
+  # Create the dense deformation field for the image.
+  dense_deformation_field = augmentation_ops.cubic_interpolation2d(
+      control_grid, control_grid_spacings_pix, net_input_spatial_shape)
+
+  return dense_deformation_field
 
 
 def create_3x3_rotation_matrix(radians):
@@ -260,8 +345,8 @@ def create_3d_deformation_field(
       control_grid_spacings_pix)
 
   # Add random deformation.
-  control_grid += deformations_magnitudes_um * tf.random_normal(
-      shape=control_grid.shape_as_list())
+  control_grid += deformations_magnitudes_um * tf.random.normal(
+      shape=control_grid.shape)
 
   # Apply affine transformation and transform units to raw image pixels.
   scale_to_pix = 1. / raw_image_element_size_um
@@ -273,7 +358,7 @@ def create_3d_deformation_field(
 
   control_grid = tf.reshape(
       tf.matmul(tf.reshape(control_grid, [-1, 3]), affine_shearing),
-      control_grid.shape_as_list())
+      control_grid.shape)
 
   # Translate to cropping position.
   control_grid += raw_image_center_pos_pix + cropping_offset_pix

@@ -497,6 +497,21 @@ void Interpolate3DMixedNearestLinear(const InType* in, int64 extent_x0,
   }
 }
 
+// Perform an optimized Transform2D. The default implementation returns false to
+// indicate it did not run.
+template <typename InTensor, typename DeformTensor, typename OutTensor,
+          InterpolationStyle interpolation_style,
+          ExtrapolationStyle extrapolation_style,
+          ConversionStyle conversion_style>
+class OptimizedTransform2D {
+ public:
+  static bool Run(const InTensor& in, const DeformTensor& deform,
+                  const typename InTensor::Scalar* padding_constant,
+                  OutTensor* out) {
+    return false;
+  }
+};
+
 // Performs the 2D deformation. Helper function for ApplyDeformation::Deform2D.
 template <typename InTensor, typename DeformTensor, typename OutTensor,
           typename Functor>
@@ -669,7 +684,8 @@ static void Transform3D(const InTensor& in, const DeformTensor& deform,
 //
 template <InterpolationStyle interpolation_style,
           ExtrapolationStyle extrapolation_style,
-          ConversionStyle conversion_style>
+          ConversionStyle conversion_style,
+          bool use_avx_optimizations = true>
 class ApplyDeformation {
  public:
   // Deforms a 2-D multi-channel array (3-D Tensor). See class documentation for
@@ -735,6 +751,13 @@ class ApplyDeformation {
       out_p->setZero();
     }
 
+    if (use_avx_optimizations &&
+        OptimizedTransform2D<InTensor, DeformTensor, OutTensor,
+                             interpolation_style, extrapolation_style,
+                             conversion_style>::Run(in, deform,
+                                                    padding_constant, out_p)) {
+      return;
+    }
     switch (interpolation_style) {
       case kNearest: {
         Transform2D(in, deform,
@@ -852,5 +875,8 @@ class ApplyDeformation {
 
 }  // namespace multidim_image_augmentation
 }  // namespace deepmind
+
+#ifdef __AVX2__
+#endif
 
 #endif  // MULTIDIM_IMAGE_AUGMENTATION_KERNELS_APPLY_DEFORMATION_H_

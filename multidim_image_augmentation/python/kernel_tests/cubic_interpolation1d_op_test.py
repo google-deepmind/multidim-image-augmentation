@@ -61,6 +61,33 @@ class CubicInterpolationTest(tf.test.TestCase):
       self.assertAlmostEqual(grid[2, 1], dense[20, 1], precision)
       self.assertAlmostEqual(grid[0, 1], dense[0, 1], precision)
 
+  def test_OddEvenError(self):
+    with self.session():
+      odd_even = augmentation_ops.cubic_interpolation1d(
+          np.ndarray([1, 1]), 2, output_length=2)
+      with self.assertRaisesWithPredicateMatch(
+          tf.errors.InvalidArgumentError,
+          "output size and input size must both be odd or both be even"):
+        odd_even.eval()
+
+  def test_EvenOddError(self):
+    with self.session():
+      even_odd = augmentation_ops.cubic_interpolation1d(
+          np.ndarray([2, 1]), 2, output_length=1)
+      with self.assertRaisesWithPredicateMatch(
+          tf.errors.InvalidArgumentError,
+          "output size and input size must both be odd or both be even"):
+        even_odd.eval()
+
+  def test_AllEvenError(self):
+    with self.session():
+      all_even = augmentation_ops.cubic_interpolation1d(
+          np.ndarray([2, 1]), 2, output_length=2)
+      with self.assertRaisesWithPredicateMatch(
+          tf.errors.InvalidArgumentError,
+          "factor must be odd as input and output size is even"):
+        all_even.eval()
+
 
 if __name__ == "__main__":
   tf.test.main()

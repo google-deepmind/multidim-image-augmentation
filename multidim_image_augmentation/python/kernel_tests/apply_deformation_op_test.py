@@ -61,8 +61,10 @@ class ApplyDeformation2DTest(tf.test.TestCase):
                           [0, -5], [0, -4], [0, -3], [0, -2], [0, -1], [0, 0],
                           [0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [0, 6],
                           [0, 7], [0, 8], [0, 9], [0, 10]]]).astype(np.float32)
+      # padding is not used but should not fail the test.
+      padding = np.array([42])
       trg = augmentation_ops.apply_deformation2d(
-          src, deform, [], extrapolation="zero_padding").eval()
+          src, deform, padding, extrapolation="zero_padding").eval()
       self.assertAllEqual(
           np.array([[[0], [0], [0], [0], [0], [0], [0], [0], [0], [0], [10],
                      [11], [12], [13], [14], [0], [0], [0], [0], [0], [0]]]),
@@ -193,8 +195,10 @@ class ApplyDeformation3DTest(tf.test.TestCase):
                            [0, 0, 2], [0, 0, 3], [0, 0, 4], [0, 0, 5],
                            [0, 0, 6], [0, 0, 7], [0, 0, 8], [0, 0, 9],
                            [0, 0, 10]]]]).astype(np.float32)
+      # padding is not used but should not fail the test.
+      padding = np.array([42])
       trg = augmentation_ops.apply_deformation3d(
-          src, deform, [], extrapolation="zero_padding").eval()
+          src, deform, padding, extrapolation="zero_padding").eval()
       self.assertAllEqual(
           np.array([[[[0], [0], [0], [0], [0], [0], [0], [0], [0], [0], [10],
                       [11], [12], [13], [14], [0], [0], [0], [0], [0], [0]]]]),

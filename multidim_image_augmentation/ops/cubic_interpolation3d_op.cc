@@ -43,10 +43,19 @@ REGISTER_OP("CubicInterpolation3D")
                                     &output_spatial_shape));
 
       // Check attributes.
+      if (factors.size() != 3) {
+        return ::tensorflow::errors::InvalidArgument(
+            "factors must be rank 3, got ", factors.size());
+      }
       if (factors[0] <= 0 || factors[1] <= 0 || factors[2] <= 0) {
         return ::tensorflow::errors::InvalidArgument(
             "Each factor must be greater than 0, got (", factors[0], ", ",
             factors[1], ", ", factors[2], ")");
+      }
+      if (output_spatial_shape.size() != 3) {
+        return ::tensorflow::errors::InvalidArgument(
+            "output_spatial_shape must be rank 3, got ",
+            output_spatial_shape.size());
       }
       if (output_spatial_shape[0] <= 0 || output_spatial_shape[1] <= 0 ||
           output_spatial_shape[2] <= 0) {
@@ -84,8 +93,8 @@ with tf.Session():
   # ...
 
   # Do the bspline interpolation.
-  dense = augmentation_ops.cubic_interpolation_2d(
-      input=grid, factor=[10, 10, 10], output_spatial_shape=[21, 21, 21]).eval()
+  dense = augmentation_ops.cubic_interpolation_3d(
+      input=grid, factors=[10, 10, 10], output_spatial_shape=[21, 21, 21]).eval()
 ```
 
 input:= A 4-D float Tensor with shape `[spatial_shape_0, spatial_shape_1,
