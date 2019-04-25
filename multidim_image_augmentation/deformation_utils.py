@@ -1,3 +1,4 @@
+# Lint as: python2, python3
 # Copyright 2018 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,6 +19,7 @@ from __future__ import division
 from __future__ import print_function
 
 import numpy as np
+from six.moves import range
 import tensorflow as tf
 from multidim_image_augmentation import augmentation_ops
 
@@ -57,8 +59,7 @@ def create_centered_identity_transformation_field(shape, spacings):
     3D case: 4-D Tensor (x0, x1, x2, comp)  describing a 3D vector field
   """
   coords = []
-  for i in xrange(len(shape)):
-    size = shape[i]
+  for i, size in enumerate(shape):
     spacing = spacings[i]
     coords.append(tf.linspace(
         -(size - 1) / 2 * spacing,

@@ -209,6 +209,7 @@ py_test(
     srcs = ["python/kernel_tests/apply_deformation_op_test.py"],
     deps = [
         ":augmentation_ops",
+        "@six_archive//:six",
         "@org_tensorflow//tensorflow:tensorflow_py",
         "@org_tensorflow//third_party/py/numpy",
     ],
@@ -220,6 +221,7 @@ py_test(
     srcs = ["python/kernel_tests/cubic_interpolation1d_op_test.py"],
     deps = [
         ":augmentation_ops",
+        "@six_archive//:six",
         "@org_tensorflow//tensorflow:tensorflow_py",
         "@org_tensorflow//third_party/py/numpy",
     ],
@@ -231,6 +233,7 @@ py_test(
     srcs = ["python/kernel_tests/cubic_interpolation2d_op_test.py"],
     deps = [
         ":augmentation_ops",
+        "@six_archive//:six",
         "@org_tensorflow//tensorflow:tensorflow_py",
         "@org_tensorflow//third_party/py/numpy",
     ],
@@ -242,6 +245,7 @@ py_test(
     srcs = ["python/kernel_tests/cubic_interpolation3d_op_test.py"],
     deps = [
         ":augmentation_ops",
+        "@six_archive//:six",
         "@org_tensorflow//tensorflow:tensorflow_py",
         "@org_tensorflow//third_party/py/numpy",
     ],
@@ -252,6 +256,7 @@ py_test(
     srcs = ["python/kernel_tests/random_lut_controlpoints_op_test.py"],
     deps = [
         ":augmentation_ops",
+        "@six_archive//:six",
         "@org_tensorflow//tensorflow:tensorflow_py",
     ],
 )
@@ -271,9 +276,11 @@ py_library(
     srcs = [
         "deformation_utils.py",
     ],
+    srcs_version = "PY2AND3",
     visibility = ["//visibility:public"],
     deps = [
         ":augmentation_ops",
+        "@six_archive//:six",
         "@org_tensorflow//tensorflow:tensorflow_py",
         "@org_tensorflow//third_party/py/numpy",
     ],

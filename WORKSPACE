@@ -1,14 +1,16 @@
 workspace(name = "multidim_image_augmentation")
 
+load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+
 # TensorFlow depends on "io_bazel_rules_closure" so we need this here.
 # Needs to be kept in sync with the same target in TensorFlow's WORKSPACE file.
 http_archive(
     name = "io_bazel_rules_closure",
-    sha256 = "a38539c5b5c358548e75b44141b4ab637bba7c4dc02b46b1f62a96d6433f56ae",
-    strip_prefix = "rules_closure-dbb96841cc0a5fb2664c37822803b06dab20c7d1",
+    sha256 = "e0a111000aeed2051f29fcc7a3f83be3ad8c6c93c186e64beb1ad313f0c7f9f9",
+    strip_prefix = "rules_closure-cf1e44edb908e9616030cc83d085989b8e6cd6df",
     urls = [
-        "https://mirror.bazel.build/github.com/bazelbuild/rules_closure/archive/dbb96841cc0a5fb2664c37822803b06dab20c7d1.tar.gz",
-        "https://github.com/bazelbuild/rules_closure/archive/dbb96841cc0a5fb2664c37822803b06dab20c7d1.tar.gz",  # 2018-04-13
+        "http://mirror.tensorflow.org/github.com/bazelbuild/rules_closure/archive/cf1e44edb908e9616030cc83d085989b8e6cd6df.tar.gz",
+        "https://github.com/bazelbuild/rules_closure/archive/cf1e44edb908e9616030cc83d085989b8e6cd6df.tar.gz",  # 2019-04-04
     ],
 )
 
@@ -18,6 +20,9 @@ http_archive(
 # 1/ curl -L https://github.com/tensorflow/tensorflow/archive/vX.Y.Z.tar.gz | sha256sum
 # 2/ Update `sha256`, `strip_prefix` and `urls` attributes appropriately.
 # 3/ Update io_bazel_rules_closure above to match the version used by TF.
+# 4/ Look in the tesnforflow WORKSPACE file (in the tar referenced above) and
+#    check if io_bazel_rules_closure needs to update too, compared to the SHA
+#    listing above.
 http_archive(
     name = "org_tensorflow",
     sha256 = "7cd19978e6bc7edc2c847bce19f95515a742b34ea5e28e4389dade35348f58ed",
