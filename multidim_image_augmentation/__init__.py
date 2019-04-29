@@ -15,6 +15,5 @@
 """When building as a dynamic .so provide a hook to load it at runtime."""
 import tensorflow as tf
 
-# TODO: Store the returned object so application code can use it.
 tf.load_op_library(
     'multidim_image_augmentation/python/ops/_augmentation_ops.so')
