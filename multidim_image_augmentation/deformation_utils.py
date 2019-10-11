@@ -90,7 +90,7 @@ def create_control_grid_for_cubic_interp(transformed_image_shape,
     3D case: 4-D Tensor (x0, x1, x2, comp)  describing a 3D vector field.
   """
 
-  grid_shape = np.zeros(len(transformed_image_shape))
+  grid_shape = np.zeros(len(transformed_image_shape), dtype=int)
   for comp in range(len(transformed_image_shape)):
     spacing_pix = float(control_grid_spacings_pix[comp])
     num_elem = float(transformed_image_shape[comp])
