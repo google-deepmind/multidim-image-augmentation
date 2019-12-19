@@ -13,7 +13,7 @@
 # limitations under the License.
 
 """When building as a dynamic .so provide a hook to load it at runtime."""
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
 
 # TODO: Store the returned object so application code can use it.
 tf.load_op_library(
