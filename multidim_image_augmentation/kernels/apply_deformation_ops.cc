@@ -165,7 +165,7 @@ class ApplyDeformationOp : public OpKernel {
 
  private:
   // One additional dimension for the channels.
-  static const int kTensorRank = spatial_dims + 1;
+  static constexpr int kTensorRank = spatial_dims + 1;
 
   typedef Eigen::Tensor<InType, kTensorRank, Eigen::RowMajor> EigenTensorIn;
   typedef Eigen::Tensor<float, kTensorRank, Eigen::RowMajor> EigenTensorDeform;
