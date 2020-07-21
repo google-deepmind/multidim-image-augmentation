@@ -1,7 +1,7 @@
 # multidim_image_augmentation provides Tensorflow operations for 2D & 3D
 # image augmentation.
 
-licenses(["notice"])  # Apache 2.0
+licenses(["notice"])
 
 exports_files(["LICENSE"])
 
