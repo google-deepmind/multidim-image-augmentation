@@ -17,6 +17,8 @@
 #ifndef MULTIDIM_IMAGE_AUGMENTATION_PLATFORM_TYPES_H_
 #define MULTIDIM_IMAGE_AUGMENTATION_PLATFORM_TYPES_H_
 
+#include <cstdint>
+
 namespace deepmind {
 namespace multidim_image_augmentation {
 
@@ -27,12 +29,12 @@ namespace multidim_image_augmentation {
 typedef signed char int8;  // NOLINT(runtime/int)
 typedef short int16;  // NOLINT(runtime/int)
 typedef int int32;  // NOLINT(runtime/int)
-typedef long long int64;  // NOLINT(runtime/int)
+typedef int64_t int64;  // NOLINT(runtime/int)
 
 typedef unsigned char uint8;  // NOLINT(runtime/int)
 typedef unsigned short uint16;  // NOLINT(runtime/int)
 typedef unsigned int uint32;  // NOLINT(runtime/int)
-typedef unsigned long long uint64;  // NOLINT(runtime/int)
+typedef uint64_t uint64;      // NOLINT(runtime/int)
 
 }  // namespace multidim_image_augmentation
 }  // namespace deepmind
