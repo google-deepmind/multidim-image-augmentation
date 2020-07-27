@@ -174,8 +174,6 @@ tf_custom_op_library(
 
 ## Python API
 
-py2and3_test = py_test
-
 tf_gen_op_wrapper_py(
     name = "gen_augmentation_ops_py",
     # 'out' has no gen_ prefix as we fully generate the python code.
@@ -205,10 +203,12 @@ tf_custom_op_py_library(
     ],
 )
 
-py2and3_test(
+py_test(
     name = "python/kernel_tests/apply_deformation_op_test",
     size = "medium",
     srcs = ["python/kernel_tests/apply_deformation_op_test.py"],
+    python_version = "PY3",
+    srcs_version = "PY3",
     deps = [
         ":augmentation_ops",
         "@six_archive//:six",
@@ -217,10 +217,12 @@ py2and3_test(
     ],
 )
 
-py2and3_test(
+py_test(
     name = "python/kernel_tests/cubic_interpolation1d_op_test",
     size = "medium",
     srcs = ["python/kernel_tests/cubic_interpolation1d_op_test.py"],
+    python_version = "PY3",
+    srcs_version = "PY3",
     deps = [
         ":augmentation_ops",
         "@six_archive//:six",
@@ -229,10 +231,12 @@ py2and3_test(
     ],
 )
 
-py2and3_test(
+py_test(
     name = "python/kernel_tests/cubic_interpolation2d_op_test",
     size = "medium",
     srcs = ["python/kernel_tests/cubic_interpolation2d_op_test.py"],
+    python_version = "PY3",
+    srcs_version = "PY3",
     deps = [
         ":augmentation_ops",
         "@six_archive//:six",
@@ -241,10 +245,12 @@ py2and3_test(
     ],
 )
 
-py2and3_test(
+py_test(
     name = "python/kernel_tests/cubic_interpolation3d_op_test",
     size = "medium",
     srcs = ["python/kernel_tests/cubic_interpolation3d_op_test.py"],
+    python_version = "PY3",
+    srcs_version = "PY3",
     deps = [
         ":augmentation_ops",
         "@six_archive//:six",
@@ -253,9 +259,11 @@ py2and3_test(
     ],
 )
 
-py2and3_test(
+py_test(
     name = "python/kernel_tests/random_lut_controlpoints_op_test",
     srcs = ["python/kernel_tests/random_lut_controlpoints_op_test.py"],
+    python_version = "PY3",
+    srcs_version = "PY3",
     deps = [
         ":augmentation_ops",
         "@six_archive//:six",
@@ -263,9 +271,11 @@ py2and3_test(
     ],
 )
 
-py2and3_test(
+py_test(
     name = "python/kernel_tests/apply_tabulated_functions_op_test",
     srcs = ["python/kernel_tests/apply_tabulated_functions_op_test.py"],
+    python_version = "PY3",
+    srcs_version = "PY3",
     deps = [
         ":augmentation_ops",
         "@org_tensorflow//tensorflow:tensorflow_py",
@@ -288,10 +298,12 @@ py_library(
     ],
 )
 
-py2and3_test(
+py_test(
     name = "deformation_utils_test",
     size = "small",
     srcs = ["deformation_utils_test.py"],
+    python_version = "PY3",
+    srcs_version = "PY3",
     deps = [
         ":deformation_utils",
         "@org_tensorflow//tensorflow:tensorflow_py",
