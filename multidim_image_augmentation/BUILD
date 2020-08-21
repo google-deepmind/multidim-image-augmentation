@@ -1,9 +1,6 @@
-# multidim_image_augmentation provides Tensorflow operations for 2D & 3D
-# image augmentation.
-
-licenses(["notice"])  # Apache 2.0
-
-exports_files(["LICENSE"])
+# Description:
+#   multidim_image_augmentation provides Tensorflow operations for 2D & 3D
+#   image augmentation.
 
 load(
     "@org_tensorflow//tensorflow:tensorflow.bzl",
@@ -13,6 +10,10 @@ load(
     "tf_kernel_library",
 )
 load("@org_tensorflow//tensorflow:tensorflow.bzl", "tf_custom_op_py_library")
+
+licenses(["notice"])
+
+exports_files(["LICENSE"])
 
 cc_library(
     name = "types",
