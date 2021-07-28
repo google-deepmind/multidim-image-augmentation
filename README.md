@@ -37,7 +37,7 @@ bazel test \
 
 Compile the library with TensorFlow 2.3
 ```
-git clone -b r2.3 https://github.com/tensorflow/tensorflow
+git clone -b v2.3.0 https://github.com/tensorflow/tensorflow
 cd tensorflow/tensorflow
 git clone https://github.com/deepmind/multidim-image-augmentation deepmind_mia
 cd deepmind_mia
