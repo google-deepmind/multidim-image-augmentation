@@ -1,0 +1,4 @@
+numpy>=1.23.0
+six>=1.16.*
+tensorflow==2.15.*
+build>=1.0.*

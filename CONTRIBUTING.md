@@ -1,8 +1,8 @@
 # How to Contribute
 
-We are not yet actively solicity github pull requests at this time, but we
+We are not actively soliciting github pull requests at this time, but we
 warmly welcome you to create a [github
-issue](https://github.com/deepmind/multidim-image-augmentation/issues/new) with
+issue](https://github.com/deepmind/multidim-image-augmentation/issues/new)
 for any bugs or feature requests you may have. In order to contribute design
 ideas or code (via the issue tracker or otherwise) to this project you will need
 to complete the Contributor License Agreement as described below.

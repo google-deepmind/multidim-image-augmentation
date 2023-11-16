@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <random>
-
 #include "multidim_image_augmentation/platform/types.h"
 #include "tensorflow/core/framework/op.h"
 #include "tensorflow/core/framework/shape_inference.h"
@@ -24,12 +22,6 @@ namespace {
 
 using ::tensorflow::shape_inference::DimensionHandle;
 using ::tensorflow::shape_inference::InferenceContext;
-
-uint64 RandomSeed() {
-  std::random_device device("/dev/urandom");
-  std::mt19937_64 seed_rng(device());
-  return seed_rng();
-}
 
 REGISTER_OP("RandomLUTControlPoints")
     .SetIsStateful()
@@ -46,7 +38,7 @@ REGISTER_OP("RandomLUTControlPoints")
 
       DimensionHandle out_shape = c->MakeDim((1 << num_control_points) + 1);
       c->set_output(0, c->MakeShape({out_shape}));
-      return tensorflow::Status::OK();
+      return tensorflow::OkStatus();
     })
     .Doc(R"doc(
 Creates controlpoints for a random monotonic increasing tabulated function.

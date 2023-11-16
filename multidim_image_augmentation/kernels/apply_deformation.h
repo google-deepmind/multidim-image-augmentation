@@ -877,6 +877,7 @@ class ApplyDeformation {
 }  // namespace deepmind
 
 #ifdef __AVX2__
+#include "multidim_image_augmentation/kernels/apply_deformation_avx.h"
 #endif
 
 #endif  // MULTIDIM_IMAGE_AUGMENTATION_KERNELS_APPLY_DEFORMATION_H_

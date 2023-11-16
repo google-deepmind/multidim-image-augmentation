@@ -1,3 +1,26 @@
-# Support bazelrc through migration of location.
-# See https://github.com/bazelbuild/bazel/issues/6319
-import %workspace%/tools/bazel.rc
+build:manylinux2014 --crosstool_top=//toolchains/preconfig/ubuntu16_04/gcc7_manylinux2014:toolchain
+build --spawn_strategy=standalone
+build --strategy=Genrule=standalone
+build -c opt
+build --cxxopt="-std=c++17"
+build --host_cxxopt="-std=c++17"
+# We can remove this flag (we keep it explicit for now)
+build --cxxopt="-D_GLIBCXX_USE_CXX11_ABI=1"
+build --host_cxxopt="-D_GLIBCXX_USE_CXX11_ABI=1"
+build --auto_output_filter=subpackages
+build --copt="-Wall" --copt="-Wno-sign-compare"
+build --linkopt="-lrt -lm"
+# We build with AVX and eigen byte alignment to match tensorflow's (and Eigen)
+# pip package byte alignment.  See b/186669968 for more details.
+build --copt=-mavx --copt=-DEIGEN_MAX_ALIGN_BYTES=64
+
+# TF isn't built in dbg mode, so our dbg builds will segfault due to inconsistency
+# of defines when using tf's headers.  In particular in refcount.h.
+build --cxxopt="-DNDEBUG"
+
+build --action_env TF_HEADER_DIR="/usr/local/lib/python3.10/dist-packages/tensorflow/include"
+build --action_env TF_SHARED_LIBRARY_DIR="/usr/local/lib/python3.10/dist-packages/tensorflow"
+build --action_env TF_SHARED_LIBRARY_NAME="libtensorflow_framework.so.2"
+build --action_env TF_NEED_CUDA="0"
+build --config=manylinux2014
+test --config=manylinux2014

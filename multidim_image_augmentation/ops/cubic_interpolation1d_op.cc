@@ -52,7 +52,7 @@ REGISTER_OP("CubicInterpolation1D")
       }
 
       c->set_output(0, c->MakeShape({out_shape_0, num_channels}));
-      return ::tensorflow::Status::OK();
+      return ::tensorflow::OkStatus();
     })
     .Doc(R"doc(
 Performs a 1D fast cubic b-spline interpolation (upscaling).

@@ -1,0 +1,1 @@
+recursive-include multidim_image_augmentation *.so

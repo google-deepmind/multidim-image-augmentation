@@ -1,8 +1,5 @@
 # Multidimensional (2D and 3D) Image Augmentation for TensorFlow
 
-_Note: this package is archived and no longer actively maintained on github. It
-remains as a public snapshot of the internal project as of January 2021._
-
 This package provides TensorFlow Ops for multidimensional volumetric image
 augmentation.
 

@@ -89,16 +89,18 @@ static Graph* ApplyTabulatedFunctions(const char* op, const char* type,
 //    P: Number of pixels
 //    T: Lookup table size
 //    O: Use optimized implementation true/false.
-#define BM_ApplyTabulatedFunctionsHelper(type, C, P, T, LABEL, O)             \
-  static void BM_NAME(BM_ApplyTabulatedFunctions, type, C, P, T,              \
-                      O)(int iters) {                                         \
-    testing::SetLabel(LABEL);                                                 \
-    deepmind::multidim_image_augmentation::tabulated_functions_op_internal::  \
-        use_avx_optimizations = O;                                            \
-    test::Benchmark("cpu", ApplyTabulatedFunctions("ApplyTabulatedFunctions", \
-                                                   #type, C, P, T))           \
-        .Run(iters);                                                          \
-  }                                                                           \
+#define BM_ApplyTabulatedFunctionsHelper(type, C, P, T, LABEL, O)            \
+  static void BM_NAME(BM_ApplyTabulatedFunctions, type, C, P, T,             \
+                      O)(::testing::benchmark::State & state) {              \
+    state.SetLabel(LABEL);                                                \
+    deepmind::multidim_image_augmentation::tabulated_functions_op_internal:: \
+        use_avx_optimizations = O;                                           \
+    test::Benchmark(                                                         \
+        "cpu",                                                               \
+        ApplyTabulatedFunctions("ApplyTabulatedFunctions", #type, C, P, T),  \
+        /*old_benchmark_api*/ false)                                         \
+        .Run(state);                                                         \
+  }                                                                          \
   BENCHMARK(BM_NAME(BM_ApplyTabulatedFunctions, type, C, P, T, O));
 
 #define BM_ApplyTabulatedFunctions(type, C, P, T, LABEL)                  \

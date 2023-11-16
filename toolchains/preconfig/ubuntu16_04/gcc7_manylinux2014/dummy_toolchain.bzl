@@ -1,10 +1,11 @@
-# Copyright 2018 Google LLC
+# pylint: disable=g-bad-file-header
+# Copyright 2017 The Bazel Authors. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#     https://www.apache.org/licenses/LICENSE-2.0
+#    http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -12,5 +13,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""When building as a dynamic .so provide a hook to load it at runtime."""
-from multidim_image_augmentation.python.ops.augmentation_ops import augmentation_ops
+"""Starlark rule that stubs a toolchain."""
+
+def _dummy_toolchain_impl(ctx):
+    ctx = ctx  # unused argument
+    toolchain = platform_common.ToolchainInfo()
+    return [toolchain]
+
+dummy_toolchain = rule(_dummy_toolchain_impl, attrs = {})
