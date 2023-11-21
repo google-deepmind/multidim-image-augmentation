@@ -37,6 +37,9 @@ RUN bazel build //:build_pip_pkg
 
 RUN $python_version -m build -o dest bazel-bin/build_pip_pkg.runfiles/__main__/
 
+ENV LD_LIBRARY_PATH=/usr/local/lib/python3.10/dist-packages/tensorflow/
+RUN auditwheel repair --plat manylinux2014_x86_64 --exclude libtensorflow_framework.so.2 -w dest/ dest/image_augmentation-*-cp310-cp310-linux_x86_64.whl
+
 WORKDIR /
 
 CMD ["/bin/bash"]

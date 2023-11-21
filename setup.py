@@ -19,13 +19,13 @@ from setuptools import dist
 from setuptools.command import install
 
 
-__version__ = '0.0.1'
+__version__ = '0.0.2'
 REQUIRED_PACKAGES = [
     'tensorflow >= 2.10.0',
     'six >= 1.10.0',
     'numpy >= 1.20.0',
 ]
-project_name = 'multidim_image_augmentation'
+project_name = 'image_augmentation'
 
 
 class InstallPlatlib(install.install):
