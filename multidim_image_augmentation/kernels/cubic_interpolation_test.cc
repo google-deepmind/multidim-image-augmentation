@@ -18,7 +18,7 @@
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
-#include "third_party/eigen3/unsupported/Eigen/CXX11/Tensor"
+#include "unsupported/Eigen/CXX11/Tensor"
 
 namespace deepmind {
 namespace multidim_image_augmentation {

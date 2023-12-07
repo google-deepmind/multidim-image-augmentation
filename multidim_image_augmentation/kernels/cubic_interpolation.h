@@ -20,7 +20,7 @@
 #define MULTIDIM_IMAGE_AUGMENTATION_KERNELS_CUBIC_INTERPOLATION_H_
 
 #include "multidim_image_augmentation/kernels/bspline.h"
-#include "third_party/eigen3/unsupported/Eigen/CXX11/Tensor"
+#include "unsupported/Eigen/CXX11/Tensor"
 
 namespace deepmind {
 namespace multidim_image_augmentation {

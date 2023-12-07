@@ -22,7 +22,7 @@
 #include <vector>
 
 #include "multidim_image_augmentation/platform/types.h"
-#include "third_party/eigen3/unsupported/Eigen/CXX11/Tensor"
+#include "unsupported/Eigen/CXX11/Tensor"
 #include "tensorflow/core/platform/logging.h"
 
 namespace deepmind {

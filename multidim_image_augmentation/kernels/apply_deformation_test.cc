@@ -19,7 +19,7 @@
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
-#include "third_party/eigen3/unsupported/Eigen/CXX11/Tensor"
+#include "unsupported/Eigen/CXX11/Tensor"
 #include "tensorflow/core/platform/test_benchmark.h"
 
 namespace deepmind {
