@@ -34,3 +34,11 @@ buildable_unit: {
     on_demand_frequency: EVERY_4_HOURS
   }
 }
+continuous_tests: {
+  name: "third_party.deepmind.multidim_image_augmentation"
+  buildable_unit_name: "third_party.deepmind.multidim_image_augmentation"
+}
+continuous_tests: {
+  name: "third_party.deepmind.multidim_image_augmentation.opt"
+  buildable_unit_name: "third_party.deepmind.multidim_image_augmentation.opt"
+}
