@@ -25,12 +25,13 @@ for i in {10..12}; do
   docker run --name=multidim-op-dev multidim-op-dev-$ver /bin/bash -c "pip install /augmentation_src/dest/*manylinux* && python -c 'from multidim_image_augmentation import augmentation_ops; from inspect import getmembers, isfunction; print(getmembers(augmentation_ops, isfunction))'" &&
   # Copy the wheel and source tarball out of the container
   docker cp multidim-op-dev:/augmentation_src/dest/. dest/ &&
-n  # Remove the container
+  # Remove the container
   docker rm multidim-op-dev
 done
 
 echo Built files:
 find dest*/
+python3 -m twine check dest/*manylinux*.whl dest/*tar.gz
 
 while true; do
 
@@ -47,4 +48,4 @@ esac
 done
 
 # Upload to PyPi
-python3 -m twine upload dest/*manylinux* dest/*tar.gz
+python3 -m twine upload dest/*manylinux*.whl dest/*tar.gz

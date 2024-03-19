@@ -6,6 +6,7 @@ sh_binary(
     data = [
         "LICENSE",
         "MANIFEST.in",
+        "README.md",
         "setup.py",
         "//multidim_image_augmentation:augmentation_ops",
         "//multidim_image_augmentation:deformation_utils",

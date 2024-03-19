@@ -14,6 +14,8 @@
 # ============================================================================
 """Setup for pip package."""
 
+import pathlib
+
 import setuptools
 from setuptools import dist
 from setuptools.command import install
@@ -50,6 +52,9 @@ class BinaryDistribution(dist.Distribution):
   def is_pure(self):
     return False
 
+# read the contents of your README file
+this_directory = pathlib.Path(__file__).parent
+long_description = (this_directory / 'README.md').read_text()
 
 setuptools.setup(
     name=project_name,
@@ -58,8 +63,11 @@ setuptools.setup(
         'multidim_image_augmentation provides Tensorflow operations for 2D & 3D'
         ' image augmentation.'
     ),
+    long_description=long_description,
+    long_description_content_type='text/markdown',
     author='Google Inc.',
     author_email='opensource@google.com',
+    url='https://github.com/google-deepmind/multidim-image-augmentation/',
     # Contained modules and scripts.
     packages=setuptools.find_packages(),
     install_requires=REQUIRED_PACKAGES,
