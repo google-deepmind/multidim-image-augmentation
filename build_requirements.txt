@@ -1,4 +1,4 @@
-tensorflow==2.15.*
+tensorflow==2.16.1
 build>=1.0.*
 # Need a recent version of auditwheel with the `--exclude` flag
 auditwheel>=5.4.0

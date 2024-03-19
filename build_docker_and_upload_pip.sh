@@ -18,7 +18,7 @@ docker build -f Dockerfile -t multidim-op-dev . &&
 # Print the functions within the new Op we just built
 docker run --name=multidim-op-dev multidim-op-dev /bin/bash -c "pip install /augmentation_src/dest/*manylinux* && python -c 'from multidim_image_augmentation import augmentation_ops; from inspect import getmembers, isfunction; print(getmembers(augmentation_ops, isfunction))'" &&
 # Copy the wheel and source tarball out of the container
-docker cp multidim-op-dev:/augmentation_src/dest/ dest/ &&
+docker cp multidim-op-dev:/augmentation_src/dest/ . &&
 # Remove the container
 docker rm multidim-op-dev &&
 # Upload to PyPi

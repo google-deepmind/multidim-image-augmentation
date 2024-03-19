@@ -19,9 +19,9 @@ from setuptools import dist
 from setuptools.command import install
 
 
-__version__ = '0.0.2'
+__version__ = '0.0.3'
 REQUIRED_PACKAGES = [
-    'tensorflow >= 2.10.0',
+    'tensorflow >= 2.16.1',
     'six >= 1.10.0',
     'numpy >= 1.20.0',
 ]
