@@ -1,0 +1,3 @@
+# .dockerignore
+dest
+build_docker_and_upload_pip.sh

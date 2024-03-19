@@ -19,11 +19,12 @@ from setuptools import dist
 from setuptools.command import install
 
 
-__version__ = '0.0.3'
+__version__ = '0.0.4'
 REQUIRED_PACKAGES = [
     'tensorflow >= 2.16.1',
     'six >= 1.10.0',
     'numpy >= 1.20.0',
+    'absl-py == 2.1.0',
 ]
 project_name = 'image_augmentation'
 

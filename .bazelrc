@@ -18,8 +18,6 @@ build --copt=-mavx --copt=-DEIGEN_MAX_ALIGN_BYTES=64
 # of defines when using tf's headers.  In particular in refcount.h.
 build --cxxopt="-DNDEBUG"
 
-build --action_env TF_HEADER_DIR="/usr/local/lib/python3.10/dist-packages/tensorflow/include"
-build --action_env TF_SHARED_LIBRARY_DIR="/usr/local/lib/python3.10/dist-packages/tensorflow"
 build --action_env TF_SHARED_LIBRARY_NAME="libtensorflow_framework.so.2"
 build --action_env TF_NEED_CUDA="0"
 build --config=manylinux2014
