@@ -312,7 +312,7 @@ Status ApplyDeformationShapeFunction(InferenceContext* context) {
                                          num_channels, &output_shape));
   context->set_output(0, output_shape);
 
-  return tensorflow::OkStatus();
+  return absl::OkStatus();
 }
 
 }  // namespace

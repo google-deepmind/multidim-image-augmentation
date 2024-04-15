@@ -70,7 +70,7 @@ REGISTER_OP("CubicInterpolation3D")
       DimensionHandle out_shape_2 = c->MakeDim(output_spatial_shape[2]);
       c->set_output(
           0, c->MakeShape({out_shape_0, out_shape_1, out_shape_2, channels}));
-      return ::tensorflow::OkStatus();
+      return absl::OkStatus();
     })
     .Doc(R"doc(
 Performs a 3D fast cubic b-spline interpolation (upscaling).

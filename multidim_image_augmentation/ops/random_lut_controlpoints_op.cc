@@ -38,7 +38,7 @@ REGISTER_OP("RandomLUTControlPoints")
 
       DimensionHandle out_shape = c->MakeDim((1 << num_control_points) + 1);
       c->set_output(0, c->MakeShape({out_shape}));
-      return tensorflow::OkStatus();
+      return absl::OkStatus();
     })
     .Doc(R"doc(
 Creates controlpoints for a random monotonic increasing tabulated function.
