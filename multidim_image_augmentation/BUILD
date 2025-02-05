@@ -168,8 +168,6 @@ py_test(
     name = "python/kernel_tests/apply_deformation_op_test",
     size = "medium",
     srcs = ["python/kernel_tests/apply_deformation_op_test.py"],
-    python_version = "PY3",
-    srcs_version = "PY3",
     deps = [
         ":augmentation_ops",
         "//third_party/py/google/protobuf:use_fast_cpp_protos",  # Automatically added go/proto_python_upb_flip
@@ -183,8 +181,6 @@ py_test(
     name = "python/kernel_tests/cubic_interpolation1d_op_test",
     size = "medium",
     srcs = ["python/kernel_tests/cubic_interpolation1d_op_test.py"],
-    python_version = "PY3",
-    srcs_version = "PY3",
     deps = [
         ":augmentation_ops",
         "//third_party/py/google/protobuf:use_fast_cpp_protos",  # Automatically added go/proto_python_upb_flip
@@ -198,8 +194,6 @@ py_test(
     name = "python/kernel_tests/cubic_interpolation2d_op_test",
     size = "medium",
     srcs = ["python/kernel_tests/cubic_interpolation2d_op_test.py"],
-    python_version = "PY3",
-    srcs_version = "PY3",
     deps = [
         ":augmentation_ops",
         "//third_party/py/google/protobuf:use_fast_cpp_protos",  # Automatically added go/proto_python_upb_flip
@@ -213,8 +207,6 @@ py_test(
     name = "python/kernel_tests/cubic_interpolation3d_op_test",
     size = "medium",
     srcs = ["python/kernel_tests/cubic_interpolation3d_op_test.py"],
-    python_version = "PY3",
-    srcs_version = "PY3",
     deps = [
         ":augmentation_ops",
         "//third_party/py/google/protobuf:use_fast_cpp_protos",  # Automatically added go/proto_python_upb_flip
@@ -227,8 +219,6 @@ py_test(
 py_test(
     name = "python/kernel_tests/random_lut_controlpoints_op_test",
     srcs = ["python/kernel_tests/random_lut_controlpoints_op_test.py"],
-    python_version = "PY3",
-    srcs_version = "PY3",
     deps = [
         ":augmentation_ops",
         "//third_party/py/google/protobuf:use_fast_cpp_protos",  # Automatically added go/proto_python_upb_flip
@@ -240,8 +230,6 @@ py_test(
 py_test(
     name = "python/kernel_tests/apply_tabulated_functions_op_test",
     srcs = ["python/kernel_tests/apply_tabulated_functions_op_test.py"],
-    python_version = "PY3",
-    srcs_version = "PY3",
     deps = [
         ":augmentation_ops",
         "//third_party/py/google/protobuf:use_fast_cpp_protos",  # Automatically added go/proto_python_upb_flip
@@ -255,7 +243,6 @@ py_library(
     srcs = [
         "deformation_utils.py",
     ],
-    srcs_version = "PY2AND3",
     visibility = ["//visibility:public"],
     deps = [
         ":augmentation_ops",
@@ -266,8 +253,6 @@ py_test(
     name = "deformation_utils_test",
     size = "small",
     srcs = ["deformation_utils_test.py"],
-    python_version = "PY3",
-    srcs_version = "PY3",
     deps = [
         ":deformation_utils",
         "//third_party/py/google/protobuf:use_fast_cpp_protos",  # Automatically added go/proto_python_upb_flip
